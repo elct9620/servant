@@ -11,14 +11,48 @@ import (
 
 func main() {
 	plugin.Run(func(dockerCli command.Cli) *cobra.Command {
-		return &cobra.Command{
-			Use: "servant",
-			Run: func(cmd *cobra.Command, args []string) {
-				fmt.Println("Hello, servant!")
+		rootCmd := &cobra.Command{
+			Use:   "servant",
+			Short: "Servant is a plugin for docker swarm to manage the service",
+			RunE: func(cmd *cobra.Command, args []string) error {
+				return cmd.Help()
 			},
 		}
+
+		rootCmd.AddCommand(
+			installCmd(),
+			uninstallCmd(),
+		)
+
+		return rootCmd
 	}, manager.Metadata{
 		SchemaVersion: "0.1.0",
 		Vendor:        "Aotokitsuruya",
 	})
+}
+
+func installCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "install",
+		Short: "Install the servantd on the swarm manager",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Println("Work in progress")
+			return nil
+		},
+	}
+
+	return cmd
+}
+
+func uninstallCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "uninstall",
+		Short: "Uninstall the servantd on the swarm manager",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Println("Work in progress")
+			return nil
+		},
+	}
+
+	return cmd
 }
