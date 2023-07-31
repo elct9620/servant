@@ -3,10 +3,14 @@ module github.com/elct9620/servant
 go 1.20
 
 require (
+	github.com/docker/cli v24.0.5+incompatible
+	github.com/spf13/cobra v1.7.0
+)
+
+require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/beorn7/perks v0.0.0-20150223135152-b965b613227f // indirect
-	github.com/docker/cli v24.0.5+incompatible // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/docker/docker v24.0.5+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.8.0 // indirect
@@ -17,6 +21,7 @@ require (
 	github.com/fvbommel/sortorder v1.1.0 // indirect
 	github.com/gogo/protobuf v1.0.0 // indirect
 	github.com/golang/protobuf v1.3.4 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/gorilla/mux v1.7.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
@@ -32,14 +37,13 @@ require (
 	github.com/prometheus/common v0.0.0-20180110214958-89604d197083 // indirect
 	github.com/prometheus/procfs v0.0.0-20180125133057-cb4147076ac7 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/spf13/cobra v1.7.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/theupdateframework/notary v0.7.0 // indirect
-	golang.org/x/crypto v0.0.0-20201117144127-c1f2f97bffc9 // indirect
-	golang.org/x/mod v0.6.0-dev // indirect
+	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/net v0.6.0 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/term v0.5.0 // indirect
-	golang.org/x/tools v0.1.9 // indirect
+	golang.org/x/time v0.3.0 // indirect
+	gotest.tools/v3 v3.5.0 // indirect
 )
