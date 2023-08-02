@@ -18,6 +18,9 @@ ENV CGO_ENABLED=0
 RUN go build -trimpath -ldflags '-s' -o /build/bin/ ./cmd/servantd
 
 FROM scratch
+
+LABEL io.starportal.servant.type="controller"
+
 COPY --from=build /build/bin/* /usr/local/bin/
 
 EXPOSE 8080
