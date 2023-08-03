@@ -12,3 +12,6 @@ test:
 
 serve:
 	@go run ./cmd/servantd
+
+ping:
+	@go run ./cmd/servantd ping
