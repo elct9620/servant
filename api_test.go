@@ -6,18 +6,36 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"testing"
 
 	"github.com/cucumber/godog"
 	"github.com/elct9620/servant"
 	"github.com/google/go-cmp/cmp"
 )
 
-const suiteSuccessCode = 0
-
 type apiFeature struct {
 	http.Handler
 	resp *httptest.ResponseRecorder
+}
+
+func newApiFeature() *apiFeature {
+	handler := servant.NewApi()
+
+	return &apiFeature{
+		Handler: handler,
+	}
+}
+
+func (api *apiFeature) SetupScenario(ctx *godog.ScenarioContext) {
+	api.resp = httptest.NewRecorder()
+
+	ctx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+		api.resp = httptest.NewRecorder()
+		return ctx, nil
+	})
+
+	ctx.Step(`^I make a GET request to "([^"]*)"$`, api.makeAGetRequestTo)
+	ctx.Step(`^the response status code should be (\d+)$`, api.theResponseCodeShouldBe)
+	ctx.Step(`^the response body should match JSON:$`, api.theResponseShouldMatchJSON)
 }
 
 func (api *apiFeature) makeAGetRequestTo(endpoint string) error {
@@ -48,35 +66,4 @@ func (api *apiFeature) theResponseShouldMatchJSON(body *godog.DocString) error {
 	}
 
 	return nil
-}
-
-func InitializeScenario(ctx *godog.ScenarioContext) {
-	handler := servant.NewApi()
-	api := &apiFeature{
-		Handler: handler,
-	}
-
-	ctx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-		api.resp = httptest.NewRecorder()
-		return ctx, nil
-	})
-
-	ctx.Step(`^I make a GET request to "([^"]*)"$`, api.makeAGetRequestTo)
-	ctx.Step(`^the response status code should be (\d+)$`, api.theResponseCodeShouldBe)
-	ctx.Step(`^the response body should match JSON:$`, api.theResponseShouldMatchJSON)
-}
-
-func TestApi(t *testing.T) {
-	suite := godog.TestSuite{
-		ScenarioInitializer: InitializeScenario,
-		Options: &godog.Options{
-			Format:   "progress",
-			Paths:    []string{"features/api"},
-			TestingT: t,
-		},
-	}
-
-	if suite.Run() != suiteSuccessCode {
-		t.Fatal("non-zero exit code, failed to run test suite")
-	}
 }
