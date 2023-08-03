@@ -31,14 +31,21 @@ func main() {
 }
 
 func installCmd(dockerCli command.Cli) *cobra.Command {
+	var version *string
+
 	cmd := &cobra.Command{
 		Use:   "install",
 		Short: "Install the servantd on the swarm manager",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			installer := &servant.Installer{}
-			return installer.Execute(cmd.Context(), dockerCli.Client())
+
+			return installer.Execute(cmd.Context(), dockerCli.Client(), &servant.InstallConfig{
+				Version: *version,
+			})
 		},
 	}
+
+	version = cmd.Flags().StringP("version", "v", "", "The version of servant controller")
 
 	return cmd
 }
