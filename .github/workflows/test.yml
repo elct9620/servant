@@ -30,3 +30,21 @@ jobs:
         uses: actions/checkout@v3
       - name: Run tests
         run: go test ./... -v -covermode=count
+  # Experimental - not 100% sure GitHub Actions fully reset runner
+  integration:
+    name: Integration Test
+    env:
+      GODOG_TAGS: "@docker"
+      DOCKER_API_VERSION: '1.42'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Prepare
+        run: docker swarm init
+      - name: Run tests
+        run: go test -v -covermode=count
