@@ -27,11 +27,6 @@ func TestFeatures(t *testing.T) {
 		options.Tags = tags
 	}
 
-	isCi := os.Getenv("CI")
-	if len(isCi) > 0 {
-		options.Format = "cucumber:cucumber-report.json"
-	}
-
 	suite := godog.TestSuite{
 		ScenarioInitializer: InitializeScenario,
 		Options:             &options,
