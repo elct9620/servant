@@ -35,6 +35,10 @@ func (u *Uninstaller) UninstallController(ctx context.Context, api client.Servic
 		),
 	})
 
+	if err != nil {
+		return err
+	}
+
 	for _, service := range services {
 		err = api.ServiceRemove(ctx, service.ID)
 		if err != nil {
@@ -51,6 +55,10 @@ func (u *Uninstaller) UninstallNetwork(ctx context.Context, api client.NetworkAP
 			filters.Arg("name", NetworkName),
 		),
 	})
+
+	if err != nil {
+		return err
+	}
 
 	for _, network := range networks {
 		err = api.NetworkRemove(ctx, network.ID)
