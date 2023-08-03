@@ -3,6 +3,8 @@ package system
 import (
 	"net/http"
 
+	"github.com/elct9620/servant/api/schema"
+	"github.com/elct9620/servant/api/server/httputils"
 	"github.com/elct9620/servant/api/server/router"
 )
 
@@ -26,13 +28,9 @@ func (r *SystemRouter) Routes() []router.Route {
 }
 
 func (sys *SystemRouter) Liveness(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(http.StatusNoContent)
-
-	return nil
+	return httputils.WriteJson(w, http.StatusOK, &schema.LivenessResponse{Ok: true})
 }
 
 func (sys *SystemRouter) Readiness(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(http.StatusNoContent)
-
-	return nil
+	return httputils.WriteJson(w, http.StatusOK, &schema.ReadinessResponse{Ok: true})
 }
