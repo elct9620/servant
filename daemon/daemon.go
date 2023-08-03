@@ -26,7 +26,6 @@ func New(services ...Service) *Daemon {
 
 func (d *Daemon) Run(ctx context.Context) error {
 	runner, runCtx := errgroup.WithContext(ctx)
-	defer runCtx.Done()
 
 	exit := make(chan os.Signal, 1)
 	signal.Notify(exit, os.Interrupt, syscall.SIGTERM)

@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 ARG GO_VERSION=1.20.7
 ARG BASE_DEBIAN_DISTRO="bullseye"
 ARG GOLANG_IMAGE="golang:${GO_VERSION}-${BASE_DEBIAN_DISTRO}"

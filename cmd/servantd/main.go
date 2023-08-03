@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/docker/docker/client"
 	"github.com/elct9620/servant"
 	"github.com/elct9620/servant/daemon"
+	"github.com/elct9620/servant/watcher"
 	"github.com/spf13/cobra"
 )
 
@@ -34,13 +36,25 @@ func main() {
 }
 
 func runDaemon(cmd *cobra.Command, args []string) error {
+	dockerApi, err := client.NewClientWithOpts(client.FromEnv)
+	if err != nil {
+		return err
+	}
+
 	api := servant.NewApi()
+	watcher := watcher.New(dockerApi)
 
 	servantd := daemon.New(
 		daemon.NewHttpService(api),
+		watcher,
 	)
 
-	return servantd.Run(context.Background())
+	err = servantd.Run(context.Background())
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	return nil
 }
 
 func runHealthz(cmd *cobra.Command, args []string) error {

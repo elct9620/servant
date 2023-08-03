@@ -20,14 +20,19 @@ func NewHttpService(handler http.Handler) *HttpService {
 }
 
 func (svc *HttpService) Start(ctx context.Context) error {
-	return svc.Server.ListenAndServe()
-}
+	go func() {
+		<-ctx.Done()
+		svc.Stop(ctx)
+	}()
 
-func (svc *HttpService) Stop(ctx context.Context) error {
-	err := svc.Server.Shutdown(ctx)
+	err := svc.Server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
 		return nil
 	}
 
 	return err
+}
+
+func (svc *HttpService) Stop(ctx context.Context) error {
+	return svc.Server.Shutdown(ctx)
 }
