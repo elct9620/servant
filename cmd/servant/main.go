@@ -1,12 +1,10 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/docker/cli/cli-plugins/manager"
 	"github.com/docker/cli/cli-plugins/plugin"
 	"github.com/docker/cli/cli/command"
-	"github.com/elct9620/servant/cli"
+	"github.com/elct9620/servant"
 	"github.com/spf13/cobra"
 )
 
@@ -37,8 +35,8 @@ func installCmd(dockerCli command.Cli) *cobra.Command {
 		Use:   "install",
 		Short: "Install the servantd on the swarm manager",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Println("Setup the servant network")
-			return cli.InstallNetwork(cmd.Context(), dockerCli.Client())
+			installer := &servant.Installer{}
+			return installer.Execute(cmd.Context(), dockerCli.Client())
 		},
 	}
 
@@ -50,8 +48,8 @@ func uninstallCmd(dockerCli command.Cli) *cobra.Command {
 		Use:   "uninstall",
 		Short: "Uninstall the servantd on the swarm manager",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Println("Remove the servant network")
-			return cli.UninstallNetwork(cmd.Context(), dockerCli.Client())
+			uninstaller := &servant.Uninstaller{}
+			return uninstaller.Execute(cmd.Context(), dockerCli.Client())
 		},
 	}
 
