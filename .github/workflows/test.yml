@@ -43,6 +43,7 @@ jobs:
     name: Integration Test
     env:
       GODOG_TAGS: "@docker"
+    runs-on: ubuntu-latest
     steps:
       - name: Setup Go
         uses: actions/setup-go@v3
