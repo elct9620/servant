@@ -26,9 +26,9 @@ func (i *installFeature) SetupScenario(ctx *godog.ScenarioContext) {
 
 	i.client = dockerCli
 
-	ctx.Step(`^I run "docker servant install$"`, i.executeInstaller)
-	ctx.Step(`^the network should contains "([^"]*)$`, i.theNetworkShouldContains)
-	ctx.Step(`^the service should contains "([^"]*)$`, i.theServiceShouldContains)
+	ctx.Step("^I run `docker servant install`$", i.executeInstaller)
+	ctx.Step(`^the network should contains "([^"]*)"$`, i.theNetworkShouldContains)
+	ctx.Step(`^the service should contains "([^"]*)"$`, i.theServiceShouldContains)
 }
 
 func (i *installFeature) theNetworkShouldContains(networkName string) error {
