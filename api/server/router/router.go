@@ -1,6 +1,6 @@
 package router
 
-import "net/http"
+import "github.com/elct9620/servant/api/server/httputils"
 
 type Router interface {
 	Routes() []Route
@@ -9,5 +9,5 @@ type Router interface {
 type Route interface {
 	Path() string
 	Method() string
-	Handler() http.HandlerFunc
+	Handler() httputils.ApiFunc
 }

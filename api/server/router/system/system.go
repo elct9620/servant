@@ -25,10 +25,14 @@ func (r *SystemRouter) Routes() []router.Route {
 	return r.routes
 }
 
-func (sys *SystemRouter) Liveness(w http.ResponseWriter, r *http.Request) {
+func (sys *SystemRouter) Liveness(w http.ResponseWriter, r *http.Request) error {
 	w.WriteHeader(http.StatusNoContent)
+
+	return nil
 }
 
-func (sys *SystemRouter) Readiness(w http.ResponseWriter, r *http.Request) {
+func (sys *SystemRouter) Readiness(w http.ResponseWriter, r *http.Request) error {
 	w.WriteHeader(http.StatusNoContent)
+
+	return nil
 }

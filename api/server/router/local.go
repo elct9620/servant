@@ -1,11 +1,15 @@
 package router
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/elct9620/servant/api/server/httputils"
+)
 
 type localRouter struct {
 	method  string
 	path    string
-	handler http.HandlerFunc
+	handler httputils.ApiFunc
 }
 
 func (r *localRouter) Path() string {
@@ -16,11 +20,11 @@ func (r *localRouter) Method() string {
 	return r.method
 }
 
-func (r *localRouter) Handler() http.HandlerFunc {
+func (r *localRouter) Handler() httputils.ApiFunc {
 	return r.handler
 }
 
-func NewGetRoute(path string, handler http.HandlerFunc) Route {
+func NewGetRoute(path string, handler httputils.ApiFunc) Route {
 	return &localRouter{
 		method:  http.MethodGet,
 		path:    path,
