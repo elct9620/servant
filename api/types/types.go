@@ -1,6 +1,7 @@
 package types
 
 const (
+	NameKey = "servant.name"
 	TypeKey = "servant.type"
 )
 

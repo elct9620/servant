@@ -39,6 +39,7 @@ func (i *Installer) InstallNetwork(ctx context.Context, api client.NetworkAPICli
 			Driver:         "overlay",
 			CheckDuplicate: true,
 			Labels: map[string]string{
+				servantTypes.NameKey: NetworkName,
 				servantTypes.TypeKey: servantTypes.TypeNetwork,
 			},
 		})
@@ -65,7 +66,10 @@ func (i *Installer) InstallController(ctx context.Context, api client.ServiceAPI
 							Target: "/var/run/docker.sock",
 						},
 					},
-					Labels: map[string]string{},
+					Labels: map[string]string{
+						servantTypes.NameKey: ControllerName,
+						servantTypes.TypeKey: servantTypes.TypeController,
+					},
 				},
 				Placement: &swarm.Placement{
 					Constraints: []string{
@@ -81,6 +85,7 @@ func (i *Installer) InstallController(ctx context.Context, api client.ServiceAPI
 			Annotations: swarm.Annotations{
 				Name: ControllerName,
 				Labels: map[string]string{
+					servantTypes.NameKey: ControllerName,
 					servantTypes.TypeKey: servantTypes.TypeController,
 				},
 			},

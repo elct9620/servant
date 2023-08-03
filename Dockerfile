@@ -19,8 +19,6 @@ RUN go build -trimpath -ldflags '-s' -o /build/bin/ ./cmd/servantd
 
 FROM scratch
 
-LABEL servant.type="controller"
-
 COPY --from=build /build/bin/* /usr/local/bin/
 
 EXPOSE 8080
