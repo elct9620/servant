@@ -8,6 +8,8 @@ import (
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/swarm"
 	"github.com/docker/docker/client"
+
+	servantTypes "github.com/elct9620/servant/api/types"
 )
 
 type Installer struct {
@@ -36,16 +38,22 @@ func (i *Installer) InstallNetwork(ctx context.Context, api client.NetworkAPICli
 		types.NetworkCreate{
 			Driver:         "overlay",
 			CheckDuplicate: true,
-			Labels:         map[string]string{},
+			Labels: map[string]string{
+				servantTypes.TypeKey: servantTypes.TypeNetwork,
+			},
 		})
 }
 
 func (i *Installer) InstallController(ctx context.Context, api client.ServiceAPIClient, networkId string) (types.ServiceCreateResponse, error) {
+	replicas := uint64(1)
+
 	return api.ServiceCreate(
 		ctx,
 		swarm.ServiceSpec{
 			Mode: swarm.ServiceMode{
-				Global: &swarm.GlobalService{},
+				Replicated: &swarm.ReplicatedService{
+					Replicas: &replicas,
+				},
 			},
 			TaskTemplate: swarm.TaskSpec{
 				ContainerSpec: &swarm.ContainerSpec{
@@ -71,8 +79,10 @@ func (i *Installer) InstallController(ctx context.Context, api client.ServiceAPI
 				},
 			},
 			Annotations: swarm.Annotations{
-				Name:   ControllerName,
-				Labels: map[string]string{},
+				Name: ControllerName,
+				Labels: map[string]string{
+					servantTypes.TypeKey: servantTypes.TypeController,
+				},
 			},
 		},
 		types.ServiceCreateOptions{},
