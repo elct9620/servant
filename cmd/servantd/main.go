@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/elct9620/servant"
+	"github.com/elct9620/servant/daemon"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +35,12 @@ func main() {
 
 func runDaemon(cmd *cobra.Command, args []string) error {
 	api := servant.NewApi()
-	return http.ListenAndServe(fmt.Sprintf(":%d", ServePort), api)
+
+	servantd := daemon.New(
+		daemon.NewHttpService(api),
+	)
+
+	return servantd.Run(context.Background())
 }
 
 func runHealthz(cmd *cobra.Command, args []string) error {

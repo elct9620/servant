@@ -1,0 +1,33 @@
+package daemon
+
+import (
+	"context"
+	"errors"
+	"net/http"
+)
+
+type HttpService struct {
+	http.Server
+}
+
+func NewHttpService(handler http.Handler) *HttpService {
+	return &HttpService{
+		Server: http.Server{
+			Addr:    ":8080",
+			Handler: handler,
+		},
+	}
+}
+
+func (svc *HttpService) Start(ctx context.Context) error {
+	return svc.Server.ListenAndServe()
+}
+
+func (svc *HttpService) Stop(ctx context.Context) error {
+	err := svc.Server.Shutdown(ctx)
+	if errors.Is(err, http.ErrServerClosed) {
+		return nil
+	}
+
+	return err
+}
