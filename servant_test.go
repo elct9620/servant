@@ -12,6 +12,9 @@ const suiteSuccessCode = 0
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	api := newApiFeature()
 	api.SetupScenario(ctx)
+
+	install := &installFeature{}
+	install.SetupScenario(ctx)
 }
 
 func TestFeatures(t *testing.T) {
