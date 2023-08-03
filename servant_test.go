@@ -5,35 +5,39 @@ import (
 	"testing"
 
 	"github.com/cucumber/godog"
-	"github.com/spf13/pflag"
 )
 
-var e2eOptions = godog.Options{
-	Format: "pretty",
-	Tags:   "~@wip && ~@docker",
-}
-
-func init() {
-	godog.BindCommandLineFlags("godog.", &e2eOptions)
-}
+const suiteSuccessCode = 0
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	api := newApiFeature()
 	api.SetupScenario(ctx)
 }
 
-func TestMain(m *testing.M) {
-	pflag.Parse()
-	e2eOptions.Paths = []string{"features"}
-
-	status := godog.TestSuite{
-		ScenarioInitializer: InitializeScenario,
-		Options:             &e2eOptions,
-	}.Run()
-
-	if st := m.Run(); st > status {
-		status = st
+func TestFeatures(t *testing.T) {
+	options := godog.Options{
+		Format:   "pretty",
+		Paths:    []string{"features"},
+		Tags:     "~@wip && ~@docker",
+		TestingT: t,
 	}
 
-	os.Exit(status)
+	tags := os.Getenv("GODOG_TAGS")
+	if len(tags) > 0 {
+		options.Tags = tags
+	}
+
+	isCi := os.Getenv("CI")
+	if len(isCi) > 0 {
+		options.Format = "cucumber:cucumber-report.json"
+	}
+
+	suite := godog.TestSuite{
+		ScenarioInitializer: InitializeScenario,
+		Options:             &options,
+	}
+
+	if st := suite.Run(); st != suiteSuccessCode {
+		t.Errorf("Test suite failed with status code: %d", st)
+	}
 }
