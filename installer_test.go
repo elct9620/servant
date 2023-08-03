@@ -10,14 +10,17 @@ import (
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/errdefs"
+	"github.com/elct9620/servant"
 )
 
 type installFeature struct {
 	client client.APIClient
 }
 
-func (i *installFeature) executeInstaller() error {
-	return nil
+func (i *installFeature) executeInstaller(ctx context.Context) error {
+	installer := &servant.Installer{}
+
+	return installer.Execute(ctx, i.client, &servant.InstallConfig{})
 }
 
 func (i *installFeature) SetupScenario(ctx *godog.ScenarioContext) {
