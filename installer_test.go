@@ -3,11 +3,13 @@ package servant_test
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/cucumber/godog"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
+	"github.com/docker/docker/errdefs"
 )
 
 type installFeature struct {
@@ -31,27 +33,47 @@ func (i *installFeature) SetupScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^the service should contains "([^"]*)"$`, i.theServiceShouldContains)
 }
 
-func (i *installFeature) theNetworkShouldContains(networkName string) error {
-	_, err := i.client.NetworkInspect(context.Background(), networkName, types.NetworkInspectOptions{})
-	if err != nil {
-		return err
-	}
+func (i *installFeature) theNetworkShouldContains(ctx context.Context, networkName string) error {
+	stepCtx, cancel := context.WithTimeout(ctx, stepWaitDuration)
+	defer cancel()
 
-	return nil
+	for {
+		_, err := i.client.NetworkInspect(stepCtx, networkName, types.NetworkInspectOptions{})
+		if errdefs.IsNotFound(err) {
+			time.Sleep(1 * time.Second)
+			continue
+		}
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
 }
 
-func (i *installFeature) theServiceShouldContains(serviceName string) error {
-	services, err := i.client.ServiceList(context.Background(), types.ServiceListOptions{
-		Filters: filters.NewArgs(filters.Arg("name", serviceName)),
-	})
-	if err != nil {
-		return err
-	}
+func (i *installFeature) theServiceShouldContains(ctx context.Context, serviceName string) error {
+	stepCtx, cancel := context.WithTimeout(ctx, stepWaitDuration)
+	defer cancel()
 
-	isFound := len(services) > 0
-	if !isFound {
-		return fmt.Errorf("service %s not found", serviceName)
-	}
+	for {
+		services, err := i.client.ServiceList(stepCtx, types.ServiceListOptions{
+			Filters: filters.NewArgs(filters.Arg("name", serviceName)),
+		})
+		if errdefs.IsNotFound(err) {
+			time.Sleep(1 * time.Second)
+			continue
+		}
 
-	return nil
+		if err != nil {
+			return err
+		}
+
+		isFound := len(services) > 0
+		if !isFound {
+			return fmt.Errorf("service %s not found", serviceName)
+		}
+
+		return nil
+	}
 }

@@ -3,11 +3,13 @@ package servant_test
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/cucumber/godog"
 )
 
 const suiteSuccessCode = 0
+const stepWaitDuration = 30 * time.Second
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	api := newApiFeature()
