@@ -8,6 +8,7 @@ import (
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/swarm"
 	"github.com/docker/docker/client"
+	"github.com/docker/docker/errdefs"
 
 	servantTypes "github.com/elct9620/servant/api/types"
 )
@@ -22,14 +23,13 @@ type InstallConfig struct {
 
 func (i *Installer) Execute(ctx context.Context, api client.APIClient, config *InstallConfig) error {
 	fmt.Println("Installing the servant network...")
-	network, err := i.InstallNetwork(ctx, api, config)
+	err := i.InstallNetwork(ctx, api, config)
 	if err != nil {
 		return err
 	}
 
-	config.NetworkID = network.ID
 	fmt.Println("Installing the servant controller...")
-	_, err = i.InstallController(ctx, api, config)
+	err = i.InstallController(ctx, api, config)
 	if err != nil {
 		return err
 	}
@@ -37,8 +37,8 @@ func (i *Installer) Execute(ctx context.Context, api client.APIClient, config *I
 	return nil
 }
 
-func (i *Installer) InstallNetwork(ctx context.Context, api client.NetworkAPIClient, config *InstallConfig) (types.NetworkCreateResponse, error) {
-	return api.NetworkCreate(
+func (i *Installer) InstallNetwork(ctx context.Context, api client.NetworkAPIClient, config *InstallConfig) error {
+	res, err := api.NetworkCreate(
 		ctx,
 		NetworkName,
 		types.NetworkCreate{
@@ -49,9 +49,23 @@ func (i *Installer) InstallNetwork(ctx context.Context, api client.NetworkAPICli
 				servantTypes.TypeKey: servantTypes.TypeNetwork,
 			},
 		})
+
+	if errdefs.IsConflict(err) {
+		res, err := api.NetworkInspect(ctx, NetworkName, types.NetworkInspectOptions{})
+		if err != nil {
+			return err
+		}
+
+		config.NetworkID = res.ID
+		return nil
+	}
+
+	config.NetworkID = res.ID
+
+	return err
 }
 
-func (i *Installer) InstallController(ctx context.Context, api client.ServiceAPIClient, config *InstallConfig) (types.ServiceCreateResponse, error) {
+func (i *Installer) InstallController(ctx context.Context, api client.ServiceAPIClient, config *InstallConfig) error {
 	replicas := uint64(1)
 	image := fmt.Sprintf("%s:%s", ControllerImage, ControllerVersion)
 
@@ -59,7 +73,7 @@ func (i *Installer) InstallController(ctx context.Context, api client.ServiceAPI
 		image = fmt.Sprintf("%s:%s", ControllerImage, config.Version)
 	}
 
-	return api.ServiceCreate(
+	_, err := api.ServiceCreate(
 		ctx,
 		swarm.ServiceSpec{
 			Mode: swarm.ServiceMode{
@@ -103,4 +117,6 @@ func (i *Installer) InstallController(ctx context.Context, api client.ServiceAPI
 		},
 		types.ServiceCreateOptions{},
 	)
+
+	return err
 }
