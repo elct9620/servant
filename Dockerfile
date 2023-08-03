@@ -19,7 +19,7 @@ RUN go build -trimpath -ldflags '-s' -o /build/bin/ ./cmd/servantd
 
 FROM scratch
 
-LABEL io.starportal.servant.type="controller"
+LABEL servant.type="controller"
 
 COPY --from=build /build/bin/* /usr/local/bin/
 
