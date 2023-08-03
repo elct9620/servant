@@ -22,7 +22,7 @@ func NewHttpService(handler http.Handler) *HttpService {
 func (svc *HttpService) Start(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
-		svc.Stop(ctx)
+		_ = svc.Stop(ctx)
 	}()
 
 	err := svc.Server.ListenAndServe()
