@@ -42,7 +42,7 @@ jobs:
   integration:
     name: Integration Test
     env:
-      GODOG_TAGS: @docker
+      GODOG_TAGS: "@docker"
     steps:
       - name: Setup Go
         uses: actions/setup-go@v3
