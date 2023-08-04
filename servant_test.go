@@ -74,11 +74,7 @@ func asyncAssert(ctx context.Context, duration time.Duration, f AsyncAssertFunc)
 			return err
 		}
 
-		select {
-		case <-stepCtx.Done():
-			return stepCtx.Err()
-		default:
-			time.Sleep(1 * time.Second)
-		}
+		cancel()
+		return stepCtx.Err()
 	}
 }
