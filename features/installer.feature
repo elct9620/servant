@@ -6,6 +6,6 @@ Feature: Installer
     Then I can see the following networks:
       | Name    |
       | servant |
-    And I can see the follwoing services:
+    And I can see the following services:
       | Name               |
       | servant-controller |

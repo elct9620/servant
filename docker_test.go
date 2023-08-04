@@ -39,7 +39,11 @@ func (s *dockerSteps) iCanSeeTheFollowingNetworks(ctx context.Context, networks 
 
 		foundNetworkName := []string{}
 		for _, network := range networkList {
-			foundNetworkName = append(foundNetworkName, network.Name)
+			for _, name := range expectedNetworks {
+				if network.Name == name {
+					foundNetworkName = append(foundNetworkName, name)
+				}
+			}
 		}
 
 		if !cmp.Equal(expectedNetworks, foundNetworkName) {
@@ -64,7 +68,11 @@ func (s *dockerSteps) iCanSeeTheFollowingServices(ctx context.Context, services 
 
 		foundServiceName := []string{}
 		for _, service := range serviceList {
-			foundServiceName = append(foundServiceName, service.Spec.Name)
+			for _, name := range expectedServices {
+				if service.Spec.Name == name {
+					foundServiceName = append(foundServiceName, name)
+				}
+			}
 		}
 
 		if !cmp.Equal(expectedServices, foundServiceName) {
