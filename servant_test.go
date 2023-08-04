@@ -74,7 +74,6 @@ func asyncAssert(ctx context.Context, duration time.Duration, f AsyncAssertFunc)
 			return err
 		}
 
-		cancel()
 		return stepCtx.Err()
 	}
 }
