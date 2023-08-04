@@ -20,10 +20,15 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 }
 
 func TestFeatures(t *testing.T) {
+	isIntegration := os.Getenv("INTEGRATION") == "yes"
+	if !isIntegration {
+		t.SkipNow()
+	}
+
 	options := godog.Options{
 		Format:   "pretty",
 		Paths:    []string{"features"},
-		Tags:     "~@wip && ~@docker",
+		Tags:     "~@wip",
 		TestingT: t,
 	}
 

@@ -34,7 +34,7 @@ jobs:
   integration:
     name: Integration Test
     env:
-      GODOG_TAGS: "@docker"
+      INTEGRATION: 'yes'
       DOCKER_API_VERSION: '1.42'
     runs-on: ubuntu-latest
     steps:
