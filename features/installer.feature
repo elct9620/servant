@@ -1,6 +1,11 @@
 @docker
 Feature: Installer
   Scenario: Install servant controller to docker swarm
-    When I run `docker servant install`
-    Then the network should contains "servant"
-    And the service should contains "servant-controller"
+    Given a docker client
+    When I run the installer
+    Then I can see the following networks:
+      | Name    |
+      | servant |
+    And I can see the follwoing services:
+      | Name               |
+      | servant-controller |

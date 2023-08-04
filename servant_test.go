@@ -1,22 +1,32 @@
 package servant_test
 
 import (
+	"context"
 	"os"
 	"testing"
 	"time"
 
 	"github.com/cucumber/godog"
+	"github.com/docker/docker/errdefs"
 )
 
 const suiteSuccessCode = 0
 const stepWaitDuration = 30 * time.Second
 
-func InitializeScenario(ctx *godog.ScenarioContext) {
-	api := newApiFeature()
-	api.SetupScenario(ctx)
+type testStep interface {
+	InitializeScenario(ctx *godog.ScenarioContext)
+}
 
-	install := &installFeature{}
-	install.SetupScenario(ctx)
+func InitializeScenario(ctx *godog.ScenarioContext) {
+	steps := []testStep{
+		newApiSteps(),
+		&installSteps{},
+		&dockerSteps{},
+	}
+
+	for _, step := range steps {
+		step.InitializeScenario(ctx)
+	}
 }
 
 func TestFeatures(t *testing.T) {
@@ -44,5 +54,31 @@ func TestFeatures(t *testing.T) {
 
 	if st := suite.Run(); st != suiteSuccessCode {
 		t.Errorf("Test suite failed with status code: %d", st)
+	}
+}
+
+type AsyncAssertFunc func(ctx context.Context) error
+
+func asyncAssert(ctx context.Context, duration time.Duration, f AsyncAssertFunc) error {
+	stepCtx, cancel := context.WithTimeout(ctx, duration)
+	defer cancel()
+
+	for {
+		err := f(stepCtx)
+		if errdefs.IsNotFound(err) {
+			time.Sleep(1 * time.Second)
+			continue
+		}
+
+		if err != nil {
+			return err
+		}
+
+		select {
+		case <-stepCtx.Done():
+			return stepCtx.Err()
+		default:
+			time.Sleep(1 * time.Second)
+		}
 	}
 }

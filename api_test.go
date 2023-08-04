@@ -12,22 +12,20 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-type apiFeature struct {
+type apiSteps struct {
 	http.Handler
 	resp *httptest.ResponseRecorder
 }
 
-func newApiFeature() *apiFeature {
+func newApiSteps() *apiSteps {
 	handler := servant.NewApi()
 
-	return &apiFeature{
+	return &apiSteps{
 		Handler: handler,
 	}
 }
 
-func (api *apiFeature) SetupScenario(ctx *godog.ScenarioContext) {
-	api.resp = httptest.NewRecorder()
-
+func (api *apiSteps) InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		api.resp = httptest.NewRecorder()
 		return ctx, nil
@@ -38,20 +36,20 @@ func (api *apiFeature) SetupScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^the response body should match JSON:$`, api.theResponseShouldMatchJSON)
 }
 
-func (api *apiFeature) makeAGetRequestTo(endpoint string) error {
+func (api *apiSteps) makeAGetRequestTo(endpoint string) error {
 	req := httptest.NewRequest("GET", endpoint, nil)
 	api.ServeHTTP(api.resp, req)
 	return nil
 }
 
-func (api *apiFeature) theResponseCodeShouldBe(code int) error {
+func (api *apiSteps) theResponseCodeShouldBe(code int) error {
 	if api.resp.Code != code {
 		return fmt.Errorf("the response code should be %d, but got %d", code, api.resp.Code)
 	}
 	return nil
 }
 
-func (api *apiFeature) theResponseShouldMatchJSON(body *godog.DocString) error {
+func (api *apiSteps) theResponseShouldMatchJSON(body *godog.DocString) error {
 	var expected, actual interface{}
 	if err := json.Unmarshal([]byte(body.Content), &expected); err != nil {
 		return err
