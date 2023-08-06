@@ -2,6 +2,7 @@ package servant_test
 
 import (
 	"context"
+	"errors"
 
 	"github.com/cucumber/godog"
 	"github.com/docker/docker/client"
@@ -12,6 +13,21 @@ type installSteps struct {
 }
 
 func (i *installSteps) InitializeScenario(ctx *godog.ScenarioContext) {
+	ctx.After(func(ctx context.Context, sc *godog.Scenario, scErr error) (context.Context, error) {
+		uninstaller := servant.Uninstaller{}
+
+		dockerCli, err := client.NewClientWithOpts(client.FromEnv)
+		if err != nil {
+			return ctx, errors.Join(scErr, err)
+		}
+
+		err = uninstaller.Execute(ctx, dockerCli)
+		if err != nil {
+			return ctx, errors.Join(scErr, err)
+		}
+
+		return ctx, nil
+	})
 	ctx.Step(`^I run the installer$`, i.iRunTheInstaller)
 }
 
