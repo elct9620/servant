@@ -20,11 +20,6 @@ func NewHttpService(handler http.Handler) *HttpService {
 }
 
 func (svc *HttpService) Start(ctx context.Context) error {
-	go func() {
-		<-ctx.Done()
-		_ = svc.Stop(ctx)
-	}()
-
 	err := svc.Server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
 		return nil

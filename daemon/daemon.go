@@ -38,7 +38,11 @@ func (d *Daemon) Run(ctx context.Context) error {
 	}
 
 	go func() {
-		<-exit
+		select {
+		case <-runCtx.Done():
+		case <-exit:
+		}
+
 		for _, service := range d.services {
 			service := service
 
