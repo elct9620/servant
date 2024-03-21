@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/cucumber/godog v0.12.6
 	github.com/docker/cli v24.0.5+incompatible
-	github.com/docker/docker v24.0.7+incompatible
+	github.com/docker/docker v24.0.9+incompatible
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/google/go-cmp v0.5.9
 	github.com/spf13/cobra v1.7.0
