@@ -1,12 +1,12 @@
 module github.com/elct9620/servant
 
-go 1.20
+go 1.23.0
 
 require (
 	github.com/cucumber/godog v0.12.6
 	github.com/docker/cli v24.0.5+incompatible
 	github.com/docker/docker v24.0.9+incompatible
-	github.com/go-chi/chi/v5 v5.0.10
+	github.com/go-chi/chi/v5 v5.2.2
 	github.com/google/go-cmp v0.5.9
 	github.com/spf13/cobra v1.7.0
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
